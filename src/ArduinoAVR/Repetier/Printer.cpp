@@ -804,9 +804,6 @@ void Printer::setup()
     bed_neopixel.show();
     ext_neopixel.begin();
     ext_neopixel.show();
-    uint32_t w = ext_neopixel.Color(255, 250, 250);
-    ext_neopixel.setPixelColor(1, w);
-    ext_neopixel.show();
   
 #ifdef ANALYZER
 // Channel->pin assignments

@@ -2481,8 +2481,10 @@ void Commands::handle_neopixels() {
     last_bed_c = bed_c;
     bed_c = Printer::bed_neopixel.Color(neo_r, neo_g, neo_b);
     if(bed_c != last_bed_c) {  //only update if there's a change
-      Printer::bed_neopixel.setPixelColor(0, bed_c);
-      Printer::bed_neopixel.show();
+      for(uint16_t i=0; i<Printer::bed_neopixel.numPixels(); i++) {
+        Printer::bed_neopixel.setPixelColor(i, bed_c);
+        Printer::bed_neopixel.show();
+      }
     }
 
   //  SET Extruder LED   
@@ -2511,8 +2513,10 @@ void Commands::handle_neopixels() {
     last_ext_c = ext_c;
     ext_c = Printer::ext_neopixel.Color(neo_r, neo_g, neo_b);
     if(ext_c != last_ext_c) {
-      Printer::ext_neopixel.setPixelColor(0, ext_c);
-      Printer::ext_neopixel.show();
+      for(uint16_t i=0; i<Printer::ext_neopixel.numPixels(); i++) {
+        Printer::ext_neopixel.setPixelColor(i, ext_c);
+        Printer::ext_neopixel.show();
+      }
     }
   }
 }
