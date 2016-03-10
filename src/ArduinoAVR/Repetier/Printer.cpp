@@ -18,8 +18,10 @@
 
 #include "Repetier.h"
 
-Adafruit_NeoPixel Printer::ext_neopixel = Adafruit_NeoPixel(2, 42, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel Printer::bed_neopixel = Adafruit_NeoPixel(1, 44, NEO_GRB + NEO_KHZ800);
+#ifdef NEOPIXEL_LEDS
+  Adafruit_NeoPixel Printer::ext_neopixel = Adafruit_NeoPixel(EXT_NUM_LEDS, EXT_PIN, NEO_GRB + NEO_KHZ800);
+  Adafruit_NeoPixel Printer::bed_neopixel = Adafruit_NeoPixel(BED_NUM_LEDS, BED_PIN, NEO_GRB + NEO_KHZ800);
+#endif
 
 #if USE_ADVANCE
 ufast8_t Printer::maxExtruderSpeed;            ///< Timer delay for end extruder speed
@@ -800,11 +802,13 @@ void Printer::setup()
 #endif
     HAL::hwSetup();
     
+#ifdef NEOPIXEL_LEDS
     bed_neopixel.begin();
     bed_neopixel.show();
     ext_neopixel.begin();
     ext_neopixel.show();
-  
+#endif
+
 #ifdef ANALYZER
 // Channel->pin assignments
 #if ANALYZER_CH0>=0
