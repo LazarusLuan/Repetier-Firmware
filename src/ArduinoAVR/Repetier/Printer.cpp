@@ -18,11 +18,6 @@
 
 #include "Repetier.h"
 
-#ifdef NEOPIXEL_LEDS
-  Adafruit_NeoPixel Printer::ext_neopixel = Adafruit_NeoPixel(EXT_NUM_LEDS, EXT_PIN, NEO_GRB + NEO_KHZ800);
-  Adafruit_NeoPixel Printer::bed_neopixel = Adafruit_NeoPixel(BED_NUM_LEDS, BED_PIN, NEO_GRB + NEO_KHZ800);
-#endif
-
 #if USE_ADVANCE
 ufast8_t Printer::maxExtruderSpeed;            ///< Timer delay for end extruder speed
 volatile int Printer::extruderStepsNeeded; ///< This many extruder steps are still needed, <0 = reverse steps needed.
@@ -803,10 +798,7 @@ void Printer::setup()
     HAL::hwSetup();
     
 #ifdef NEOPIXEL_LEDS
-    bed_neopixel.begin();
-    bed_neopixel.show();
-    ext_neopixel.begin();
-    ext_neopixel.show();
+    WS2812::setup();
 #endif
 
 #ifdef ANALYZER

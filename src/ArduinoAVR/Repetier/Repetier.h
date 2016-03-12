@@ -983,4 +983,6 @@ extern int debugWaitLoop;
 #include "CustomEvents.h"
 #endif
 
+#include "WS2812.h"
+
 #endif
