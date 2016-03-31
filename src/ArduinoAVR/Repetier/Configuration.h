@@ -54,8 +54,8 @@
 #define FAN_THERMO_THERMISTOR_TYPE 1
 
 //#define EXTERNALSERIAL  use Arduino serial library instead of build in. Requires more ram, has only 63 byte input buffer.
-// Uncomment the following line if you are using arduino compatible firmware made for Arduino version earlier then 1.0
-// If it is incompatible you will get compiler errors about write functions not beeing compatible!
+// Uncomment the following line if you are using Arduino compatible firmware made for Arduino version earlier then 1.0
+// If it is incompatible you will get compiler errors about write functions not being compatible!
 //#define COMPAT_PRE1
 #define BLUETOOTH_SERIAL  -1
 #define BLUETOOTH_BAUD  115200
@@ -74,6 +74,7 @@
 #define RETRACT_ON_PAUSE 2
 #define PAUSE_START_COMMANDS ""
 #define PAUSE_END_COMMANDS ""
+#define SHARED_EXTRUDER_HEATER 0
 #define EXT0_X_OFFSET 0
 #define EXT0_Y_OFFSET 0
 #define EXT0_Z_OFFSET 0
@@ -86,6 +87,11 @@
 #define EXT0_INVERSE 0
 #define EXT0_ENABLE_PIN ORIG_E0_ENABLE_PIN
 #define EXT0_ENABLE_ON 0
+#define EXT0_MIRROR_STEPPER 0
+#define EXT0_STEP2_PIN ORIG_E0_STEP_PIN
+#define EXT0_DIR2_PIN ORIG_E0_DIR_PIN
+#define EXT0_INVERSE2 0
+#define EXT0_ENABLE2_PIN ORIG_E0_ENABLE_PIN
 #define EXT0_MAX_FEEDRATE 50
 #define EXT0_MAX_START_FEEDRATE 20
 #define EXT0_MAX_ACCELERATION 5000
@@ -93,9 +99,9 @@
 #define EXT0_WATCHPERIOD 1
 #define EXT0_PID_INTEGRAL_DRIVE_MAX 230
 #define EXT0_PID_INTEGRAL_DRIVE_MIN 40
-#define EXT0_PID_PGAIN_OR_DEAD_TIME 28.88
-#define EXT0_PID_I 2.09
-#define EXT0_PID_D 99.78
+#define EXT0_PID_PGAIN_OR_DEAD_TIME 21.22
+#define EXT0_PID_I 2.07
+#define EXT0_PID_D 54.33
 #define EXT0_PID_MAX 255
 #define EXT0_ADVANCE_K 0
 #define EXT0_ADVANCE_L 0
@@ -282,7 +288,7 @@ It also can add a delay to wait for spindle to run on full speed.
 #define DISTORTION_CORRECTION 0
 #define DISTORTION_CORRECTION_POINTS 5
 #define DISTORTION_CORRECTION_R 100
-#define DISTORTION_PERMANENT 1
+#define DISTORTION_PERMANENT 0
 #define DISTORTION_UPDATE_FREQUENCY 15
 #define DISTORTION_START_DEGRADE 0.5
 #define DISTORTION_END_HEIGHT 1
@@ -344,6 +350,8 @@ It also can add a delay to wait for spindle to run on full speed.
 #define PRINTLINE_CACHE_SIZE 16
 #define MOVE_CACHE_LOW 10
 #define LOW_TICKS_PER_MOVE 250000
+#define EXTRUDER_SWITCH_XY_SPEED 100
+#define DUAL_X_AXIS 0
 #define FEATURE_TWO_XSTEPPER 0
 #define X2_STEP_PIN   ORIG_E1_STEP_PIN
 #define X2_DIR_PIN    ORIG_E1_DIR_PIN
@@ -409,20 +417,20 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define Z_PROBE_PIN ORIG_Z_MIN_PIN
 #define Z_PROBE_PULLUP 1
 #define Z_PROBE_ON_HIGH 0
-#define Z_PROBE_X_OFFSET -20
-#define Z_PROBE_Y_OFFSET -35
+#define Z_PROBE_X_OFFSET -25
+#define Z_PROBE_Y_OFFSET 15
 #define Z_PROBE_WAIT_BEFORE_TEST 0
 #define Z_PROBE_SPEED 1.5
-#define Z_PROBE_XY_SPEED 100
+#define Z_PROBE_XY_SPEED 80
 #define Z_PROBE_SWITCHING_DISTANCE 0.5
 #define Z_PROBE_REPETITIONS 2
-#define Z_PROBE_HEIGHT 1.15
+#define Z_PROBE_HEIGHT 0.3
 #define Z_PROBE_START_SCRIPT ""
 #define Z_PROBE_FINISHED_SCRIPT ""
 #define Z_PROBE_REQUIRES_HEATING 0
 #define Z_PROBE_MIN_TEMPERATURE 150
 #define FEATURE_AUTOLEVEL 1
-#define Z_PROBE_X1 0
+#define Z_PROBE_X1 20
 #define Z_PROBE_Y1 0
 #define Z_PROBE_X2 165
 #define Z_PROBE_Y2 0
@@ -461,6 +469,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_FAN_CONTROL 1
 #define FEATURE_FAN2_CONTROL 0
 #define FEATURE_CONTROLLER 0
+#define ADC_KEYPAD_PIN -1
 #define LANGUAGE_EN_ACTIVE 1
 #define LANGUAGE_DE_ACTIVE 1
 #define LANGUAGE_NL_ACTIVE 1
@@ -553,9 +562,9 @@ Values must be in range 1..255
             "invertEnable": "0",
             "acceleration": 5000,
             "watchPeriod": 1,
-            "pidP": 28.88,
-            "pidI": 2.09,
-            "pidD": 99.78,
+            "pidP": 21.22,
+            "pidI": 2.07,
+            "pidD": 54.33,
             "advanceK": 0,
             "advanceL": 0,
             "waitRetractTemp": 150,
@@ -581,7 +590,15 @@ Values must be in range 1..255
             "advanceBacklashSteps": 0,
             "decoupleTestPeriod": 12,
             "jamPin": -1,
-            "jamPullup": "0"
+            "jamPullup": "0",
+            "mirror": "0",
+            "invert2": "0",
+            "stepper2": {
+                "name": "Extruder 0",
+                "step": "ORIG_E0_STEP_PIN",
+                "dir": "ORIG_E0_DIR_PIN",
+                "enable": "ORIG_E0_ENABLE_PIN"
+            }
         }
     ],
     "uiLanguage": 9,
@@ -832,16 +849,16 @@ Values must be in range 1..255
     "zProbeBedDistance": 2,
     "zProbePullup": "1",
     "zProbeOnHigh": "0",
-    "zProbeXOffset": -20,
-    "zProbeYOffset": -35,
+    "zProbeXOffset": -25,
+    "zProbeYOffset": 15,
     "zProbeWaitBeforeTest": "0",
     "zProbeSpeed": 1.5,
-    "zProbeXYSpeed": 100,
-    "zProbeHeight": 1.15,
+    "zProbeXYSpeed": 80,
+    "zProbeHeight": 0.3,
     "zProbeStartScript": "",
     "zProbeFinishedScript": "",
     "featureAutolevel": "1",
-    "zProbeX1": 0,
+    "zProbeX1": 20,
     "zProbeY1": 0,
     "zProbeX2": 165,
     "zProbeY2": 0,
@@ -886,7 +903,7 @@ Values must be in range 1..255
     "distortionCorrection": "0",
     "distortionCorrectionPoints": 5,
     "distortionCorrectionR": 100,
-    "distortionPermanent": "1",
+    "distortionPermanent": "0",
     "distortionUpdateFrequency": 15,
     "distortionStartDegrade": 0.5,
     "distortionEndDegrade": 1,
@@ -1048,6 +1065,10 @@ Values must be in range 1..255
     "bedMotor3Y": 200,
     "zProbeRequiresHeating": "0",
     "zProbeMinTemperature": 150,
+    "adcKeypadPin": -1,
+    "sharedExtruderHeater": "0",
+    "extruderSwitchXYSpeed": 100,
+    "dualXAxis": "0",
     "hasMAX6675": false,
     "hasMAX31855": false,
     "hasGeneric1": false,
@@ -1057,7 +1078,7 @@ Values must be in range 1..255
     "hasUser1": false,
     "hasUser2": false,
     "numExtruder": 1,
-    "version": 92.8,
+    "version": 92.9,
     "primaryPortName": ""
 }
 ========== End configuration string ==========
