@@ -775,7 +775,7 @@ void Printer::setup()
     HAL::hwSetup();
     
 #ifdef NEOPIXEL_LEDS
-    WS2812::setup();
+    WS2812::init();
 #endif
 
 #ifdef ANALYZER
